@@ -5,6 +5,7 @@ import {
   addRef,
   sign,
   pubKeyFromPriKey,
+  decomposeTRC20data,
   Address,
 } from './lib/tron.js';
 
@@ -271,19 +272,56 @@ export default class TronWallet {
   #transformTx(tx) {
     const hexAddress = Address.fromPublicKey(this.#publicKey).toHex();
     const contract = tx.raw_data.contract[0];
-    const isIncoming = contract.parameter.value.to_address === hexAddress;
-
-    return {
-      id: tx.txID,
-      from: Address.fromHex(contract.parameter.value.owner_address).toBase58Check(),
-      to: Address.fromHex(contract.parameter.value.to_address).toBase58Check(),
-      amount: isIncoming ? contract.parameter.value.amount : `-${contract.parameter.value.amount}`,
-      timestamp: tx.block_timestamp,
-      fee: tx.net_fee,
-      isIncoming,
-      // TODO confirmation
-      confirmed: true,
-    };
+    if (contract.type === 'TransferContract') {
+      const isIncoming = contract.parameter.value.to_address === hexAddress;
+      return {
+        status: tx.ret[0].contractRet === 'SUCCESS',
+        id: tx.txID,
+        from: Address.fromHex(contract.parameter.value.owner_address).toBase58Check(),
+        to: Address.fromHex(contract.parameter.value.to_address).toBase58Check(),
+        amount: isIncoming ? contract.parameter.value.amount : `-${contract.parameter.value.amount}`,
+        timestamp: tx.block_timestamp,
+        fee: tx.net_fee,
+        isIncoming,
+        // TODO confirmation
+        confirmed: true,
+      };
+    } else if (contract.type === 'TriggerSmartContract') {
+      const data = decomposeTRC20data(contract.parameter.value.data);
+      const isIncoming = data.to === this.#getAddress();
+      return {
+        status: tx.ret[0].contractRet === 'SUCCESS',
+        id: tx.txID,
+        from: Address.fromHex(contract.parameter.value.owner_address).toBase58Check(),
+        to: data.to,
+        amount: 0,
+        timestamp: tx.block_timestamp,
+        fee: tx.net_fee,
+        isIncoming,
+        // TODO confirmation
+        confirmed: true,
+        //token: this.#crypto.address,
+      };
+    } else {
+      // Unsupported transaction type
+      let from = '';
+      try {
+        from = Address.fromHex(contract.parameter.value.owner_address).toBase58Check();
+      // eslint-disable-next-line no-empty
+      } catch (err) {}
+      return {
+        status: tx.ret[0].contractRet === 'SUCCESS',
+        id: tx.txID,
+        from,
+        to: '',
+        amount: 0,
+        timestamp: tx.block_timestamp,
+        fee: tx.net_fee,
+        isIncoming: true,
+        // TODO confirmation
+        confirmed: true,
+      };
+    }
   }
 
   #transformTRC20Tx(tx) {
@@ -294,7 +332,6 @@ export default class TronWallet {
       to: tx.to,
       amount: isIncoming ? tx.value : `-${tx.value}`,
       timestamp: tx.block_timestamp,
-      // TODO fee
       fee: 0,
       isIncoming,
       // TODO confirmation

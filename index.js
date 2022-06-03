@@ -369,7 +369,7 @@ export default class TronWallet {
       tx,
       to: address,
       amount: amount.negated().toString(10),
-      total: amount.plus(this.#minerFee),
+      total: this.#crypto.type === 'token' ? amount : amount.plus(this.#minerFee),
       timestamp: new Date(),
       fee: this.#minerFee.toString(10),
       isIncoming: false,

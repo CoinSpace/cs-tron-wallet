@@ -33,6 +33,7 @@ export default class TronWallet {
     default: true,
   }];
   #useTestNetwork;
+  #minConf = 21;
 
   // TODO calculate honestly O_o
   #minerFee = new BigNumber(1100000);
@@ -283,8 +284,9 @@ export default class TronWallet {
         timestamp: tx.block_timestamp,
         fee: tx.net_fee,
         isIncoming,
-        // TODO confirmation
-        confirmed: true,
+        confirmations: tx.confirmations,
+        confirmed: tx.confirmations >= this.#minConf,
+        minConf: this.#minConf,
       };
     } else if (contract.type === 'TriggerSmartContract') {
       const data = decomposeTRC20data(contract.parameter.value.data);
@@ -298,8 +300,9 @@ export default class TronWallet {
         timestamp: tx.block_timestamp,
         fee: tx.net_fee,
         isIncoming,
-        // TODO confirmation
-        confirmed: true,
+        confirmations: tx.confirmations,
+        confirmed: tx.confirmations >= this.#minConf,
+        minConf: this.#minConf,
         //token: this.#crypto.address,
       };
     } else {
@@ -318,8 +321,9 @@ export default class TronWallet {
         timestamp: tx.block_timestamp,
         fee: tx.net_fee,
         isIncoming: true,
-        // TODO confirmation
-        confirmed: true,
+        confirmations: tx.confirmations,
+        confirmed: tx.confirmations >= this.#minConf,
+        minConf: this.#minConf,
       };
     }
   }

@@ -11,11 +11,12 @@ import {
 
 // https://github.com/bitcoin/bips/blob/master/bip-0044.mediawiki
 // https://github.com/satoshilabs/slips/blob/master/slip-0044.md
-const BIP44_PATH = "m/44'/195'/0'/0/0";
+const BIP44_PATH = "m/44'/195'/0'";
 
 export default class TronWallet {
   #crypto;
   #platformCrypto;
+  #settings;
   #cache;
   #balance;
   #request;
@@ -78,6 +79,12 @@ export default class TronWallet {
     }
     this.#platformCrypto = options.platformCrypto;
 
+    if (!options.settings) {
+      throw new TypeError('settings should be passed');
+    }
+    this.#settings = options.settings;
+    this.#settings.bip44 = this.#settings.bip44 || BIP44_PATH;
+
     if (!options.cache) {
       throw new TypeError('cache should be passed');
     }
@@ -103,13 +110,14 @@ export default class TronWallet {
     if (options.seed) {
       const hdkey = HDKey
         .fromMasterSeed(Buffer.from(options.seed, 'hex'))
-        .derive(BIP44_PATH);
+        .derive(this.#settings.bip44);
       this.#privateKey = hdkey.privateKey;
       //Tron uses uncompressed public key O_o
       //this.#publicKey = hdkey.publicKey;
       this.#publicKey = pubKeyFromPriKey(this.#privateKey);
     } else if (options.publicKey) {
-      this.#publicKey = Buffer.from(JSON.parse(options.publicKey), 'hex');
+      const data = JSON.parse(options.publicKey);
+      this.#publicKey = Buffer.from(data.key, 'hex');
     } else {
       throw new Error('seed or publicKey should be passed');
     }
@@ -128,12 +136,15 @@ export default class TronWallet {
   unlock(seed) {
     this.#privateKey = HDKey
       .fromMasterSeed(Buffer.from(seed, 'hex'))
-      .derive(BIP44_PATH)
+      .derive(this.#settings.bip44)
       .privateKey;
   }
 
   publicKey() {
-    return JSON.stringify(this.#publicKey.toString('hex'));
+    return JSON.stringify({
+      key: this.#publicKey.toString('hex'),
+      path: this.#settings.bip44,
+    });
   }
 
   #getAddress() {

@@ -6,12 +6,12 @@ import TronWallet from '../index.js';
 // eslint-disable-next-line max-len
 const RANDOM_SEED = '3e818cec5efc7505369fae3f162af61130b673fa9b40e5955d5cde22a85afa03748d074356a281a5fc1dbd0b721357c56095a54de8d4bc6ecaa288f300776ae4';
 // eslint-disable-next-line max-len
-const RANDOM_PUBLIC_KEY = '"04844ecd42cb9d64522deb749be9c21b343004c95f7e811cbf5d22450959d96bb9a40fc3eda8e72d46c2e7b65e2754f6be803f65cec3762300ca3970490b4e8636"';
+const RANDOM_PUBLIC_KEY = '{"key":"042a8c26a5b8a90ee32bb6ee88ea653dec6bb61ace5c53a70f09405b6cf3181b1773a3b50117e3669caffdf6b4792edd5be4a59af84f3f995e3b446d360048a695","path":"m/44\'/195\'/0\'"}';
 
 const TRANSACTIONS = JSON.parse(await fs.readFile('./test/fixtures/transactions.json'));
 const TRANSACTIONS_TRC20 = JSON.parse(await fs.readFile('./test/fixtures/transactions-trc20.json'));
 
-const WALLET_ADDRESS = 'TX9bqDuzDRX1Baco84VMKWKudFMGQLkWfF';
+const WALLET_ADDRESS = 'TLbsGXhkHe5jr37KNUKBfYETqSmQtRMceb';
 const DESTIONATION_ADDRESS = 'TCN3Kpdp9FTE244dnDu5jGSxsPSYuDzh6o';
 const LATEST_BLOCKHASH = {
   blockID: '00000000019a60a89eb14248ba1a9c5c2cb4b6a21f769f4ae6b75ba19607e76a',
@@ -56,6 +56,7 @@ describe('Wallet', () => {
         crypto,
         platformCrypto: crypto,
         cache,
+        settings: {},
       });
       assert.strictEqual(wallet.isLocked, false);
     });
@@ -69,6 +70,7 @@ describe('Wallet', () => {
         crypto,
         platformCrypto: crypto,
         cache,
+        settings: {},
       });
       assert.strictEqual(wallet.isLocked, true);
     });
@@ -84,6 +86,7 @@ describe('Wallet', () => {
         crypto,
         platformCrypto: crypto,
         cache,
+        settings: {},
       });
       assert.strictEqual(wallet.isLocked, false);
       wallet.lock();
@@ -101,6 +104,7 @@ describe('Wallet', () => {
         crypto,
         platformCrypto: crypto,
         cache,
+        settings: {},
       });
       assert.strictEqual(wallet.isLocked, true);
       wallet.unlock(RANDOM_SEED);
@@ -118,6 +122,7 @@ describe('Wallet', () => {
         crypto,
         platformCrypto: crypto,
         cache,
+        settings: {},
       });
       const publicKey = wallet.publicKey();
       assert.strictEqual(publicKey, RANDOM_PUBLIC_KEY);
@@ -134,6 +139,7 @@ describe('Wallet', () => {
         crypto,
         platformCrypto: crypto,
         cache,
+        settings: {},
       });
       const address = wallet.getNextAddress();
       assert.strictEqual(address, WALLET_ADDRESS);
@@ -152,6 +158,7 @@ describe('Wallet', () => {
         crypto,
         platformCrypto: crypto,
         cache,
+        settings: {},
       });
       await wallet.load();
       assert.strictEqual(wallet.balance, '0');
@@ -168,6 +175,7 @@ describe('Wallet', () => {
         crypto,
         platformCrypto: crypto,
         cache,
+        settings: {},
       });
       await wallet.load();
       assert.strictEqual(wallet.balance, '6000000');
@@ -184,6 +192,7 @@ describe('Wallet', () => {
         crypto,
         platformCrypto: crypto,
         cache,
+        settings: {},
       });
       await wallet.load();
       assert.strictEqual(wallet.balance, '6000000');
@@ -202,6 +211,7 @@ describe('Wallet', () => {
         crypto: token,
         platformCrypto: crypto,
         cache,
+        settings: {},
       });
       await wallet.load();
       assert.strictEqual(wallet.balance, '6000000');
@@ -220,6 +230,7 @@ describe('Wallet', () => {
         crypto,
         platformCrypto: crypto,
         cache,
+        settings: {},
       });
       await wallet.load();
       assert.deepStrictEqual(wallet.estimateFees('0'), [
@@ -243,6 +254,7 @@ describe('Wallet', () => {
         crypto,
         platformCrypto: crypto,
         cache,
+        settings: {},
       });
       await wallet.load();
       assert.deepStrictEqual(wallet.estimateFees('0'), [
@@ -266,6 +278,7 @@ describe('Wallet', () => {
         crypto,
         platformCrypto: crypto,
         cache,
+        settings: {},
       });
       await wallet.load();
       assert.deepStrictEqual(wallet.estimateFees('150000'), [
@@ -289,6 +302,7 @@ describe('Wallet', () => {
         crypto,
         platformCrypto: crypto,
         cache,
+        settings: {},
       });
       await wallet.load();
       assert.deepStrictEqual(wallet.estimateFees('4900000'), [
@@ -312,6 +326,7 @@ describe('Wallet', () => {
         crypto,
         platformCrypto: crypto,
         cache,
+        settings: {},
       });
       await wallet.load();
       assert.deepStrictEqual(wallet.estimateFees('100000000000000'), [
@@ -338,6 +353,7 @@ describe('Wallet', () => {
         crypto,
         platformCrypto: crypto,
         cache,
+        settings: {},
       });
       await wallet.load();
     });
@@ -413,6 +429,7 @@ describe('Wallet', () => {
         crypto,
         platformCrypto: crypto,
         cache,
+        settings: {},
       });
       await wallet.load();
       assert.strictEqual(wallet.balance, '6000000');
@@ -443,6 +460,7 @@ describe('Wallet', () => {
         crypto,
         platformCrypto: crypto,
         cache,
+        settings: {},
       });
       await wallet.load();
       const res = await wallet.loadTxs();
@@ -464,6 +482,7 @@ describe('Wallet', () => {
         crypto: token,
         platformCrypto: crypto,
         cache,
+        settings: {},
       });
       await wallet.load();
       const res = await wallet.loadTxs();
@@ -484,10 +503,11 @@ describe('Wallet', () => {
         crypto,
         platformCrypto: crypto,
         cache,
+        settings: {},
       });
       await wallet.load();
       // eslint-disable-next-line max-len
-      const expected = `address,privatekey\n${WALLET_ADDRESS},08171f36432864a34d80d99365c10a0e03141b5eb04e62a01f85a6c15fb9c288`;
+      const expected = `address,privatekey\n${WALLET_ADDRESS},3a13fde504087fb821c75b798b2f18fa9dc45644bb2c3b700b0df514f557125b`;
       assert.strictEqual(wallet.exportPrivateKeys(), expected);
     });
   });

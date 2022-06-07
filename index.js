@@ -43,10 +43,6 @@ export default class TronWallet {
     return !this.#privateKey;
   }
 
-  get addressTypes() {
-    return ['base'];
-  }
-
   get feeRates() {
     return this.#feeRates.map((item) => {
       return {
@@ -66,6 +62,10 @@ export default class TronWallet {
 
   get platformCrypto() {
     return this.#platformCrypto;
+  }
+
+  get settings() {
+    return this.#settings;
   }
 
   constructor(options = {}) {

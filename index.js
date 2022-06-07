@@ -407,7 +407,7 @@ export default class TronWallet {
 
   txUrl(txId) {
     if (this.#useTestNetwork) {
-      return `https://shasta.tronscan.org/#/transaction/${txId}`;
+      return `https://nile.tronscan.org/#/transaction/${txId}`;
     } else {
       return `https://tronscan.org/#/transaction/${txId}`;
     }

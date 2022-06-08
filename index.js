@@ -37,7 +37,7 @@ export default class TronWallet {
   #minConf = 21;
 
   // TODO calculate honestly O_o
-  #minerFee = new BigNumber(1100000);
+  #minerFee = new BigNumber(10000000);
   #dustThreshold = new BigNumber(1);
 
   get isLocked() {

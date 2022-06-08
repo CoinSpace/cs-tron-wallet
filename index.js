@@ -38,6 +38,7 @@ export default class TronWallet {
 
   // TODO calculate honestly O_o
   #minerFee = new BigNumber(1100000);
+  #dustThreshold = new BigNumber(1);
 
   get isLocked() {
     return !this.#privateKey;
@@ -365,13 +366,11 @@ export default class TronWallet {
       throw new Error('Destination address equal source address');
     }
     const amount = new BigNumber(value, 10);
-    /*
     if (amount.isLessThan(this.#dustThreshold)) {
       const error = new Error('Invalid value');
       error.dustThreshold = this.#dustThreshold.toString(10);
       throw error;
     }
-    */
     // TODO transfer token fee calculation
     if (this.#crypto.type !== 'token' && this.#balance.isLessThan(amount.plus(this.#minerFee))) {
       throw new Error('Insufficient funds');

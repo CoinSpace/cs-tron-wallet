@@ -356,7 +356,7 @@ describe('Wallet', () => {
       await wallet.load();
     });
 
-    it.skip('should fail (small amount)', async () => {
+    it('should fail (small amount)', async () => {
       await assert.rejects(async () => {
         await wallet.createTx(
           DESTIONATION_ADDRESS,

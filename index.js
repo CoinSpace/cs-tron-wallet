@@ -401,7 +401,7 @@ export default class TronWallet {
 
   async signTx(tx) {
     const latestBlock = await this.#getLatestBlock();
-    const txWithRef = addRef(tx, latestBlock);
+    const txWithRef = addRef(tx, latestBlock, this.#crypto.type === 'token');
     const signedTx = sign(this.#privateKey.toString('hex'), txWithRef);
     return signedTx;
   }

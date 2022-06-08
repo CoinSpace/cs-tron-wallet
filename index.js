@@ -182,6 +182,9 @@ export default class TronWallet {
       baseURL: this.#apiNode,
       disableDefaultCatch: true,
     }).catch((err) => {
+      if (config.url.endsWith('api/v1/transaction/submit') && err.code === 'ERR_BAD_REQUEST') {
+        throw new Error('Insufficient amount of TRX to pay fee.');
+      }
       console.error(err);
       throw new Error('cs-node-error');
     });
@@ -418,7 +421,7 @@ export default class TronWallet {
     if (this.#useTestNetwork) {
       return `https://nile.tronscan.org/#/transaction/${txId}`;
     } else {
-      return `https://tronscan.org/#/transaction/${txId}`;
+      return `https://nile.tronscan.org/#/transaction/${txId}`;
     }
   }
 

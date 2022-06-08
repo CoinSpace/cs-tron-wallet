@@ -198,20 +198,19 @@ export default class TronWallet {
   }
 
   async #calculateBalance() {
-    const account = await this.#requestNode({
-      url: `api/v1/account/${this.#getAddress()}/balance`,
-      method: 'get',
-    });
     if (this.#crypto.type === 'token') {
-      const trc20 = account.trc20 ? account.trc20.reduce((accum, item) => {
-        return {
-          ...accum,
-          ...item,
-        };
-      }, {}) : {};
-      return new BigNumber(trc20[this.#crypto.address] || 0);
+      const account = await this.#requestNode({
+        url: `api/v1/account/${this.#getAddress()}/trc20/${this.#crypto.address}/balance`,
+        method: 'get',
+      });
+      return new BigNumber(account.balance || 0);
+    } else {
+      const account = await this.#requestNode({
+        url: `api/v1/account/${this.#getAddress()}/balance`,
+        method: 'get',
+      });
+      return new BigNumber(account.balance || 0);
     }
-    return new BigNumber(account.balance || 0);
   }
 
   #calculateMaxAmount(feeRate) {

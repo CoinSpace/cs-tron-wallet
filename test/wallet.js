@@ -202,9 +202,7 @@ describe('Wallet', () => {
       const wallet = new TronWallet({
         seed: RANDOM_SEED,
         request: mockRequest({
-          [`node/api/v1/account/${WALLET_ADDRESS}/balance`]: { trc20: [{
-            [token.address]: 6000000,
-          }] },
+          [`node/api/v1/account/${WALLET_ADDRESS}/trc20/${token.address}/balance`]: { balance: 6000000 },
         }),
         apiNode: 'node',
         apiWeb: 'web',
@@ -474,7 +472,7 @@ describe('Wallet', () => {
       const wallet = new TronWallet({
         publicKey: RANDOM_PUBLIC_KEY,
         request: mockRequest({
-          [`node/api/v1/account/${WALLET_ADDRESS}/balance`]: { balance: 6000000 },
+          [`node/api/v1/account/${WALLET_ADDRESS}/trc20/${token.address}/balance`]: { balance: 6000000 },
           [`node/api/v1/account/${WALLET_ADDRESS}/trc20/${token.address}/transactions`]: TRANSACTIONS_TRC20,
         }),
         apiNode: 'node',

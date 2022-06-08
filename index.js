@@ -183,7 +183,9 @@ export default class TronWallet {
       disableDefaultCatch: true,
     }).catch((err) => {
       if (config.url.endsWith('api/v1/transaction/submit') && err.code === 'ERR_BAD_REQUEST') {
-        throw new Error('Insufficient amount of TRX to pay fee.');
+        const e = new Error('Insufficient amount of TRX to pay fee.');
+        e.required = this.#minerFee.toString(10);
+        throw e;
       }
       console.error(err);
       throw new Error('cs-node-error');

@@ -421,7 +421,7 @@ export default class TronWallet {
     if (this.#useTestNetwork) {
       return `https://nile.tronscan.org/#/transaction/${txId}`;
     } else {
-      return `https://nile.tronscan.org/#/transaction/${txId}`;
+      return `https://tronscan.org/#/transaction/${txId}`;
     }
   }
 

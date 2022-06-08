@@ -235,7 +235,7 @@ describe('Wallet', () => {
         {
           name: 'default',
           default: true,
-          estimate: '1100000',
+          estimate: '10000000',
           maxAmount: '0',
         },
       ]);
@@ -245,7 +245,7 @@ describe('Wallet', () => {
       const wallet = new TronWallet({
         publicKey: RANDOM_PUBLIC_KEY,
         request: mockRequest({
-          [`node/api/v1/account/${WALLET_ADDRESS}/balance`]: { balance: 6000000 },
+          [`node/api/v1/account/${WALLET_ADDRESS}/balance`]: { balance: 60000000 },
         }),
         apiNode: 'node',
         apiWeb: 'web',
@@ -259,8 +259,8 @@ describe('Wallet', () => {
         {
           name: 'default',
           default: true,
-          estimate: '1100000',
-          maxAmount: '4900000',
+          estimate: '10000000',
+          maxAmount: '50000000',
         },
       ]);
     });
@@ -269,7 +269,7 @@ describe('Wallet', () => {
       const wallet = new TronWallet({
         publicKey: RANDOM_PUBLIC_KEY,
         request: mockRequest({
-          [`node/api/v1/account/${WALLET_ADDRESS}/balance`]: { balance: 6000000 },
+          [`node/api/v1/account/${WALLET_ADDRESS}/balance`]: { balance: 60000000 },
         }),
         apiNode: 'node',
         apiWeb: 'web',
@@ -283,8 +283,8 @@ describe('Wallet', () => {
         {
           name: 'default',
           default: true,
-          estimate: '1100000',
-          maxAmount: '4900000',
+          estimate: '10000000',
+          maxAmount: '50000000',
         },
       ]);
     });
@@ -293,7 +293,7 @@ describe('Wallet', () => {
       const wallet = new TronWallet({
         publicKey: RANDOM_PUBLIC_KEY,
         request: mockRequest({
-          [`node/api/v1/account/${WALLET_ADDRESS}/balance`]: { balance: 6000000 },
+          [`node/api/v1/account/${WALLET_ADDRESS}/balance`]: { balance: 60000000 },
         }),
         apiNode: 'node',
         apiWeb: 'web',
@@ -303,12 +303,12 @@ describe('Wallet', () => {
         settings: {},
       });
       await wallet.load();
-      assert.deepStrictEqual(wallet.estimateFees('4900000'), [
+      assert.deepStrictEqual(wallet.estimateFees('50000000'), [
         {
           name: 'default',
           default: true,
-          estimate: '1100000',
-          maxAmount: '4900000',
+          estimate: '10000000',
+          maxAmount: '50000000',
         },
       ]);
     });
@@ -317,7 +317,7 @@ describe('Wallet', () => {
       const wallet = new TronWallet({
         publicKey: RANDOM_PUBLIC_KEY,
         request: mockRequest({
-          [`node/api/v1/account/${WALLET_ADDRESS}/balance`]: { balance: 6000000 },
+          [`node/api/v1/account/${WALLET_ADDRESS}/balance`]: { balance: 60000000 },
         }),
         apiNode: 'node',
         apiWeb: 'web',
@@ -331,8 +331,8 @@ describe('Wallet', () => {
         {
           name: 'default',
           default: true,
-          estimate: '1100000',
-          maxAmount: '4900000',
+          estimate: '10000000',
+          maxAmount: '50000000',
         },
       ]);
     });
@@ -344,7 +344,7 @@ describe('Wallet', () => {
       wallet = new TronWallet({
         publicKey: RANDOM_PUBLIC_KEY,
         request: mockRequest({
-          [`node/api/v1/account/${WALLET_ADDRESS}/balance`]: { balance: 6000000 },
+          [`node/api/v1/account/${WALLET_ADDRESS}/balance`]: { balance: 60000000 },
         }),
         apiNode: 'node',
         apiWeb: 'web',
@@ -395,8 +395,7 @@ describe('Wallet', () => {
     it('should create valid transaction', async () => {
       const transaction = await wallet.createTx(
         DESTIONATION_ADDRESS,
-        '1500000',
-        '1100000'
+        '1500000'
       );
       assert.strictEqual(transaction.to, DESTIONATION_ADDRESS);
       assert.strictEqual(transaction.amount, '-1500000');
@@ -405,8 +404,7 @@ describe('Wallet', () => {
     it('should create valid transaction with max amount', async () => {
       const transaction = await wallet.createTx(
         DESTIONATION_ADDRESS,
-        '4900000',
-        '1100000'
+        '4900000'
       );
       assert.strictEqual(transaction.to, DESTIONATION_ADDRESS);
       assert.strictEqual(transaction.amount, '-4900000');
@@ -418,7 +416,7 @@ describe('Wallet', () => {
       const wallet = new TronWallet({
         seed: RANDOM_SEED,
         request: mockRequest({
-          [`node/api/v1/account/${WALLET_ADDRESS}/balance`]: { balance: 6000000 },
+          [`node/api/v1/account/${WALLET_ADDRESS}/balance`]: { balance: 60000000 },
           'node/api/v1/latestblock': LATEST_BLOCKHASH,
           'node/api/v1/transaction/submit': '12345',
         }),
@@ -430,18 +428,17 @@ describe('Wallet', () => {
         settings: {},
       });
       await wallet.load();
-      assert.strictEqual(wallet.balance, '6000000');
+      assert.strictEqual(wallet.balance, '60000000');
 
       const raw = await wallet.createTx(
         DESTIONATION_ADDRESS,
-        '1500000',
-        '1100000'
+        '1500000'
       );
 
       const transaction = await wallet.sendTx(await raw.sign());
 
       assert(transaction);
-      assert.strictEqual(wallet.balance, '3400000');
+      assert.strictEqual(wallet.balance, '48500000');
     });
   });
 

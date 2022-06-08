@@ -36,8 +36,7 @@ export default class TronWallet {
   #useTestNetwork;
   #minConf = 21;
 
-  // TODO calculate honestly O_o
-  #minerFee = new BigNumber(10000000);
+  #minerFee;
   #dustThreshold = new BigNumber(1);
 
   get isLocked() {
@@ -125,6 +124,13 @@ export default class TronWallet {
 
     this.#balance = new BigNumber(this.#cache.get('balance') || 0);
     this.#useTestNetwork = !!options.useTestNetwork;
+
+    if (this.#crypto.type === 'token') {
+      // TODO calculate honestly O_o
+      this.#minerFee = new BigNumber(10000000);
+    } else {
+      this.#minerFee = new BigNumber(1100000);
+    }
   }
 
   lock() {

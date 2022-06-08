@@ -235,7 +235,7 @@ describe('Wallet', () => {
         {
           name: 'default',
           default: true,
-          estimate: '10000000',
+          estimate: '1100000',
           maxAmount: '0',
         },
       ]);
@@ -259,8 +259,8 @@ describe('Wallet', () => {
         {
           name: 'default',
           default: true,
-          estimate: '10000000',
-          maxAmount: '50000000',
+          estimate: '1100000',
+          maxAmount: '58900000',
         },
       ]);
     });
@@ -283,8 +283,32 @@ describe('Wallet', () => {
         {
           name: 'default',
           default: true,
+          estimate: '1100000',
+          maxAmount: '58900000',
+        },
+      ]);
+    });
+
+    it('should estimate correct (TRC20 value 150000)', async () => {
+      const wallet = new TronWallet({
+        publicKey: RANDOM_PUBLIC_KEY,
+        request: mockRequest({
+          [`node/api/v1/account/${WALLET_ADDRESS}/trc20/${token.address}/balance`]: { balance: 6000000 },
+        }),
+        apiNode: 'node',
+        apiWeb: 'web',
+        crypto: token,
+        platformCrypto: crypto,
+        cache,
+        settings: {},
+      });
+      await wallet.load();
+      assert.deepStrictEqual(wallet.estimateFees('150000'), [
+        {
+          name: 'default',
+          default: true,
           estimate: '10000000',
-          maxAmount: '50000000',
+          maxAmount: '6000000',
         },
       ]);
     });
@@ -303,12 +327,12 @@ describe('Wallet', () => {
         settings: {},
       });
       await wallet.load();
-      assert.deepStrictEqual(wallet.estimateFees('50000000'), [
+      assert.deepStrictEqual(wallet.estimateFees('58900000'), [
         {
           name: 'default',
           default: true,
-          estimate: '10000000',
-          maxAmount: '50000000',
+          estimate: '1100000',
+          maxAmount: '58900000',
         },
       ]);
     });
@@ -331,8 +355,8 @@ describe('Wallet', () => {
         {
           name: 'default',
           default: true,
-          estimate: '10000000',
-          maxAmount: '50000000',
+          estimate: '1100000',
+          maxAmount: '58900000',
         },
       ]);
     });
@@ -438,7 +462,7 @@ describe('Wallet', () => {
       const transaction = await wallet.sendTx(await raw.sign());
 
       assert(transaction);
-      assert.strictEqual(wallet.balance, '48500000');
+      assert.strictEqual(wallet.balance, '57400000');
     });
   });
 

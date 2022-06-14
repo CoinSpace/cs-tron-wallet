@@ -317,7 +317,7 @@ export default class TronWallet {
         status: tx.ret[0].contractRet === 'SUCCESS',
         id: tx.txID,
         from: Address.fromHex(contract.parameter.value.owner_address).toBase58Check(),
-        to: data.to,
+        to: Address.fromHex(contract.parameter.value.contract_address).toBase58Check(),
         amount: 0,
         timestamp: tx.block_timestamp,
         fee: tx.net_fee,

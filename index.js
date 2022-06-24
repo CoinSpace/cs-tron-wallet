@@ -19,6 +19,7 @@ export default class TronWallet {
   #settings;
   #cache;
   #balance;
+  #tronBalance;
   #request;
   #apiNode;
   //#apiWeb;
@@ -163,7 +164,12 @@ export default class TronWallet {
   }
 
   async load() {
-    this.#balance = await this.#calculateBalance();
+    if (this.#crypto.type === 'token') {
+      this.#balance = await this.#calculateTokenBalance();
+      this.#tronBalance = await this.#calculateBalance();
+    } else {
+      this.#balance = await this.#calculateBalance();
+    }
     this.#cache.set('balance', this.#balance);
     this.#txsCursor = undefined;
     this.#hasMoreTxs = true;
@@ -210,19 +216,19 @@ export default class TronWallet {
   }
 
   async #calculateBalance() {
-    if (this.#crypto.type === 'token') {
-      const account = await this.#requestNode({
-        url: `api/v1/account/${this.#getAddress()}/trc20/${this.#crypto.address}/balance`,
-        method: 'get',
-      });
-      return new BigNumber(account.balance || 0);
-    } else {
-      const account = await this.#requestNode({
-        url: `api/v1/account/${this.#getAddress()}/balance`,
-        method: 'get',
-      });
-      return new BigNumber(account.balance || 0);
-    }
+    const account = await this.#requestNode({
+      url: `api/v1/account/${this.#getAddress()}/balance`,
+      method: 'get',
+    });
+    return new BigNumber(account.balance || 0);
+  }
+
+  async #calculateTokenBalance() {
+    const account = await this.#requestNode({
+      url: `api/v1/account/${this.#getAddress()}/trc20/${this.#crypto.address}/balance`,
+      method: 'get',
+    });
+    return new BigNumber(account.balance || 0);
   }
 
   #calculateMaxAmount(feeRate) {
@@ -383,8 +389,16 @@ export default class TronWallet {
       throw error;
     }
     // TODO transfer token fee calculation
-    if (this.#crypto.type !== 'token' && this.#balance.isLessThan(amount.plus(this.#minerFee))) {
-      throw new Error('Insufficient funds');
+    if (this.#crypto.type === 'token') {
+      if (this.#tronBalance.isLessThan(this.#minerFee)) {
+        const err = new Error('Insufficient funds for token transaction');
+        err.required = this.#minerFee.toString(10);
+        throw err;
+      }
+    } else {
+      if (this.#balance.isLessThan(amount.plus(this.#minerFee))) {
+        throw new Error('Insufficient funds');
+      }
     }
     const token = this.#crypto.type === 'token' ? this.#crypto.address : '_';
     const tx = buildTransferTransaction(token, this.#getAddress(), address, amount.toString(10));

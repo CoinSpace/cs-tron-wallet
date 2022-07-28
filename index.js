@@ -1,13 +1,11 @@
 import HDKey from 'hdkey';
 import BigNumber from 'bignumber.js';
 import {
-  buildTransferTransaction,
-  addRef,
-  sign,
-  pubKeyFromPriKey,
-  decomposeTRC20data,
   Address,
-} from './lib/tron.js';
+  TransactionCapsule,
+  getPublicKeyFromPrivateKey,
+  decodeTRC20data,
+} from 'tronlib';
 
 // https://github.com/bitcoin/bips/blob/master/bip-0044.mediawiki
 // https://github.com/satoshilabs/slips/blob/master/slip-0044.md
@@ -115,7 +113,7 @@ export default class TronWallet {
       this.#privateKey = hdkey.privateKey;
       //Tron uses uncompressed public key O_o
       //this.#publicKey = hdkey.publicKey;
-      this.#publicKey = pubKeyFromPriKey(this.#privateKey);
+      this.#publicKey = getPublicKeyFromPrivateKey(this.#privateKey);
     } else if (options.publicKey) {
       const data = JSON.parse(options.publicKey);
       this.#publicKey = Buffer.from(data.key, 'hex');
@@ -156,11 +154,11 @@ export default class TronWallet {
   }
 
   #getAddress() {
-    return Address.fromPublicKey(this.#publicKey).toBase58Check();
+    return Address.fromPublicKey(this.#publicKey);
   }
 
   getNextAddress() {
-    return this.#getAddress();
+    return this.#getAddress().toBase58Check();
   }
 
   async load() {
@@ -209,15 +207,15 @@ export default class TronWallet {
       url: 'api/v1/latestblock',
     });
     return {
-      hash: latestBlock.blockID,
-      number: latestBlock.number,
-      timestamp: latestBlock.timestamp,
+      blockID: latestBlock.blockID,
+      blockNumber: latestBlock.number,
+      blockTimestamp: latestBlock.timestamp,
     };
   }
 
   async #calculateBalance() {
     const account = await this.#requestNode({
-      url: `api/v1/account/${this.#getAddress()}/balance`,
+      url: `api/v1/account/${this.getNextAddress()}/balance`,
       method: 'get',
     });
     return new BigNumber(account.balance || 0);
@@ -225,7 +223,7 @@ export default class TronWallet {
 
   async #calculateTokenBalance() {
     const account = await this.#requestNode({
-      url: `api/v1/account/${this.#getAddress()}/trc20/${this.#crypto.address}/balance`,
+      url: `api/v1/account/${this.getNextAddress()}/trc20/${this.#crypto.address}/balance`,
       method: 'get',
     });
     return new BigNumber(account.balance || 0);
@@ -272,8 +270,8 @@ export default class TronWallet {
       return [];
     }
     const url = this.#crypto.type === 'token'
-      ? `api/v1/account/${this.#getAddress()}/trc20/${this.#crypto.address}/transactions`
-      : `api/v1/account/${this.#getAddress()}/transactions`;
+      ? `api/v1/account/${this.getNextAddress()}/trc20/${this.#crypto.address}/transactions`
+      : `api/v1/account/${this.getNextAddress()}/transactions`;
     const res = await this.#requestNode({
       url,
       method: 'get',
@@ -317,8 +315,8 @@ export default class TronWallet {
         minConf: this.#minConf,
       };
     } else if (contract.type === 'TriggerSmartContract') {
-      const data = decomposeTRC20data(contract.parameter.value.data);
-      const isIncoming = data.to === this.#getAddress();
+      const data = decodeTRC20data(contract.parameter.value.data);
+      const isIncoming = data.addressTo.toBase58Check() === this.getNextAddress();
       return {
         status: tx.ret[0].contractRet === 'SUCCESS',
         id: tx.txID,
@@ -357,7 +355,7 @@ export default class TronWallet {
   }
 
   #transformTRC20Tx(tx) {
-    const isIncoming = tx.to === this.#getAddress();
+    const isIncoming = tx.to === this.getNextAddress();
     return {
       id: tx.transaction_id,
       from: tx.from,
@@ -379,7 +377,7 @@ export default class TronWallet {
     if (!Address.isValid(address)) {
       throw new Error('Invalid address');
     }
-    if (this.#getAddress() === address) {
+    if (this.getNextAddress() === address) {
       throw new Error('Destination address equal source address');
     }
     const amount = new BigNumber(value, 10);
@@ -400,8 +398,14 @@ export default class TronWallet {
         throw new Error('Insufficient funds');
       }
     }
-    const token = this.#crypto.type === 'token' ? this.#crypto.address : '_';
-    const tx = buildTransferTransaction(token, this.#getAddress(), address, amount.toString(10));
+    const tx = this.#crypto.type === 'coin'
+      ? TransactionCapsule.createTransfer(this.#getAddress(), Address.fromBase58Check(address), amount.toNumber())
+      : TransactionCapsule.createTransferToken(
+        Address.fromBase58Check(this.#crypto.address),
+        this.#getAddress(),
+        Address.fromBase58Check(address),
+        amount.toNumber()
+      );
     return {
       wallet: this,
       tx,
@@ -413,17 +417,16 @@ export default class TronWallet {
       isIncoming: false,
       confirmed: false,
       async sign() {
-        this.tx = await this.wallet.signTx(tx);
+        await this.wallet.signTx(tx);
         return this;
       },
     };
   }
 
   async signTx(tx) {
-    const latestBlock = await this.#getLatestBlock();
-    const txWithRef = addRef(tx, latestBlock, this.#crypto.type === 'token');
-    const signedTx = sign(this.#privateKey.toString('hex'), txWithRef);
-    return signedTx;
+    const { blockID, blockNumber, blockTimestamp } = await this.#getLatestBlock();
+    tx.addRefs(Buffer.from(blockID, 'hex'), blockNumber, blockTimestamp, this.#minerFee.toNumber());
+    tx.sign(Buffer.from(this.#privateKey));
   }
 
   async sendTx(transaction) {
@@ -431,7 +434,7 @@ export default class TronWallet {
       url: 'api/v1/transaction/submit',
       method: 'post',
       data: {
-        transaction: transaction.tx.hex,
+        transaction: transaction.tx.serialize().toString('hex'),
       },
     });
     this.#balance = this.#balance.minus(transaction.total);
@@ -448,6 +451,6 @@ export default class TronWallet {
   }
 
   exportPrivateKeys() {
-    return `address,privatekey\n${this.#getAddress()},${this.#privateKey.toString('hex')}`;
+    return `address,privatekey\n${this.getNextAddress()},${this.#privateKey.toString('hex')}`;
   }
 }

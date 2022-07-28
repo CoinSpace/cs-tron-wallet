@@ -22,6 +22,7 @@ const LATEST_BLOCKHASH = {
 const crypto = {
   _id: 'tron@tron',
   platform: 'tron',
+  type: 'coin',
 };
 const token = {
   _id: 'tether@tron',

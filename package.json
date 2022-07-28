@@ -17,7 +17,7 @@
   "dependencies": {
     "bignumber.js": "^9.0.2",
     "hdkey": "^2.0.1",
-    "tronlib": "^1.0.0"
+    "tronlib": "^1.0.1"
   },
   "devDependencies": {
     "eslint": "^8.16.0",

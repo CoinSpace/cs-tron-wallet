@@ -315,7 +315,7 @@ export default class TronWallet {
         minConf: this.#minConf,
       };
     } else if (contract.type === 'TriggerSmartContract') {
-      const data = decodeTRC20data(contract.parameter.value.data);
+      const data = decodeTRC20data(Buffer.from(contract.parameter.value.data, 'hex'));
       const isIncoming = data.addressTo.toBase58Check() === this.getNextAddress();
       return {
         status: tx.ret[0].contractRet === 'SUCCESS',

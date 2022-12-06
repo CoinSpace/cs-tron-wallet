@@ -310,7 +310,7 @@ describe('Wallet', () => {
         {
           name: 'default',
           default: true,
-          estimate: '10000000',
+          estimate: '15000000',
           maxAmount: '6000000',
         },
       ]);

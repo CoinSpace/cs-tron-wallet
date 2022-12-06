@@ -126,7 +126,7 @@ export default class TronWallet {
 
     if (this.#crypto.type === 'token') {
       // TODO calculate honestly O_o
-      this.#minerFee = new BigNumber(10000000);
+      this.#minerFee = new BigNumber(15000000);
     } else {
       this.#minerFee = new BigNumber(1100000);
     }

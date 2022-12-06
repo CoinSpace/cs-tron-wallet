@@ -153,6 +153,7 @@ describe('Wallet', () => {
         seed: RANDOM_SEED,
         request: mockRequest({
           [`node/api/v1/account/${WALLET_ADDRESS}/balance`]: { balance: 0 },
+          ['node/api/v1/fee']: { trx: '1100000', trc20: '15000000' },
         }),
         apiNode: 'node',
         apiWeb: 'web',
@@ -170,6 +171,7 @@ describe('Wallet', () => {
         seed: RANDOM_SEED,
         request: mockRequest({
           [`node/api/v1/account/${WALLET_ADDRESS}/balance`]: { balance: 6000000 },
+          ['node/api/v1/fee']: { trx: '1100000', trc20: '15000000' },
         }),
         apiNode: 'node',
         apiWeb: 'web',
@@ -187,6 +189,7 @@ describe('Wallet', () => {
         publicKey: RANDOM_PUBLIC_KEY,
         request: mockRequest({
           [`node/api/v1/account/${WALLET_ADDRESS}/balance`]: { balance: 6000000 },
+          ['node/api/v1/fee']: { trx: '1100000', trc20: '15000000' },
         }),
         apiNode: 'node',
         apiWeb: 'web',
@@ -205,6 +208,7 @@ describe('Wallet', () => {
         request: mockRequest({
           [`node/api/v1/account/${WALLET_ADDRESS}/balance`]: { balance: 6000000 },
           [`node/api/v1/account/${WALLET_ADDRESS}/trc20/${token.address}/balance`]: { balance: 6000000 },
+          ['node/api/v1/fee']: { trx: '1100000', trc20: '15000000' },
         }),
         apiNode: 'node',
         apiWeb: 'web',
@@ -224,6 +228,7 @@ describe('Wallet', () => {
         publicKey: RANDOM_PUBLIC_KEY,
         request: mockRequest({
           [`node/api/v1/account/${WALLET_ADDRESS}/balance`]: { balance: 0 },
+          ['node/api/v1/fee']: { trx: '1100000', trc20: '15000000' },
         }),
         apiNode: 'node',
         apiWeb: 'web',
@@ -248,6 +253,7 @@ describe('Wallet', () => {
         publicKey: RANDOM_PUBLIC_KEY,
         request: mockRequest({
           [`node/api/v1/account/${WALLET_ADDRESS}/balance`]: { balance: 60000000 },
+          ['node/api/v1/fee']: { trx: '1100000', trc20: '15000000' },
         }),
         apiNode: 'node',
         apiWeb: 'web',
@@ -272,6 +278,7 @@ describe('Wallet', () => {
         publicKey: RANDOM_PUBLIC_KEY,
         request: mockRequest({
           [`node/api/v1/account/${WALLET_ADDRESS}/balance`]: { balance: 60000000 },
+          ['node/api/v1/fee']: { trx: '1100000', trc20: '15000000' },
         }),
         apiNode: 'node',
         apiWeb: 'web',
@@ -297,6 +304,7 @@ describe('Wallet', () => {
         request: mockRequest({
           [`node/api/v1/account/${WALLET_ADDRESS}/balance`]: { balance: 6000000 },
           [`node/api/v1/account/${WALLET_ADDRESS}/trc20/${token.address}/balance`]: { balance: 6000000 },
+          ['node/api/v1/fee']: { trx: '1100000', trc20: '15000000' },
         }),
         apiNode: 'node',
         apiWeb: 'web',
@@ -321,6 +329,7 @@ describe('Wallet', () => {
         publicKey: RANDOM_PUBLIC_KEY,
         request: mockRequest({
           [`node/api/v1/account/${WALLET_ADDRESS}/balance`]: { balance: 60000000 },
+          ['node/api/v1/fee']: { trx: '1100000', trc20: '15000000' },
         }),
         apiNode: 'node',
         apiWeb: 'web',
@@ -345,6 +354,7 @@ describe('Wallet', () => {
         publicKey: RANDOM_PUBLIC_KEY,
         request: mockRequest({
           [`node/api/v1/account/${WALLET_ADDRESS}/balance`]: { balance: 60000000 },
+          ['node/api/v1/fee']: { trx: '1100000', trc20: '15000000' },
         }),
         apiNode: 'node',
         apiWeb: 'web',
@@ -372,6 +382,7 @@ describe('Wallet', () => {
         publicKey: RANDOM_PUBLIC_KEY,
         request: mockRequest({
           [`node/api/v1/account/${WALLET_ADDRESS}/balance`]: { balance: 60000000 },
+          ['node/api/v1/fee']: { trx: '1100000', trc20: '15000000' },
         }),
         apiNode: 'node',
         apiWeb: 'web',
@@ -446,6 +457,7 @@ describe('Wallet', () => {
           [`node/api/v1/account/${WALLET_ADDRESS}/balance`]: { balance: 60000000 },
           'node/api/v1/latestblock': LATEST_BLOCKHASH,
           'node/api/v1/transaction/submit': '12345',
+          ['node/api/v1/fee']: { trx: '1100000', trc20: '15000000' },
         }),
         apiNode: 'node',
         apiWeb: 'web',
@@ -476,6 +488,7 @@ describe('Wallet', () => {
         request: mockRequest({
           [`node/api/v1/account/${WALLET_ADDRESS}/balance`]: { balance: 6000000 },
           [`node/api/v1/account/${WALLET_ADDRESS}/transactions`]: TRANSACTIONS,
+          ['node/api/v1/fee']: { trx: '1100000', trc20: '15000000' },
         }),
         apiNode: 'node',
         apiWeb: 'web',
@@ -499,6 +512,7 @@ describe('Wallet', () => {
           [`node/api/v1/account/${WALLET_ADDRESS}/balance`]: { balance: 6000000 },
           [`node/api/v1/account/${WALLET_ADDRESS}/trc20/${token.address}/balance`]: { balance: 6000000 },
           [`node/api/v1/account/${WALLET_ADDRESS}/trc20/${token.address}/transactions`]: TRANSACTIONS_TRC20,
+          ['node/api/v1/fee']: { trx: '1100000', trc20: '15000000' },
         }),
         apiNode: 'node',
         apiWeb: 'web',
@@ -520,6 +534,7 @@ describe('Wallet', () => {
         seed: RANDOM_SEED,
         request: mockRequest({
           [`node/api/v1/account/${WALLET_ADDRESS}/balance`]: { balance: 6000000 },
+          ['node/api/v1/fee']: { trx: '1100000', trc20: '15000000' },
         }),
         apiNode: 'node',
         apiWeb: 'web',

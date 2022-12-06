@@ -123,13 +123,6 @@ export default class TronWallet {
 
     this.#balance = new BigNumber(this.#cache.get('balance') || 0);
     this.#useTestNetwork = !!options.useTestNetwork;
-
-    if (this.#crypto.type === 'token') {
-      // TODO calculate honestly O_o
-      this.#minerFee = new BigNumber(15000000);
-    } else {
-      this.#minerFee = new BigNumber(1100000);
-    }
   }
 
   lock() {
@@ -168,6 +161,7 @@ export default class TronWallet {
     } else {
       this.#balance = await this.#calculateBalance();
     }
+    this.#minerFee = await this.#getMinerFee();
     this.#cache.set('balance', this.#balance);
     this.#txsCursor = undefined;
     this.#hasMoreTxs = true;
@@ -200,6 +194,18 @@ export default class TronWallet {
       console.error(err);
       throw new Error('cs-node-error');
     });
+  }
+
+  async #getMinerFee() {
+    const fee = await this.#requestNode({
+      url: 'api/v1/fee',
+    });
+    if (this.#crypto.type === 'token') {
+      // TODO calculate honestly O_o
+      return new BigNumber(fee.trc20 || 15000000);
+    } else {
+      return new BigNumber(fee.trx || 1100000);
+    }
   }
 
   async #getLatestBlock() {

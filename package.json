@@ -7,7 +7,7 @@
   "main": "./index.js",
   "type": "module",
   "scripts": {
-    "lint": "eslint test index.js",
+    "lint": "eslint lib test index.js",
     "test": "mocha --reporter spec"
   },
   "repository": {
@@ -15,24 +15,25 @@
     "url": "https://github.com/CoinSpace/cs-tron-wallet.git"
   },
   "dependencies": {
-    "bignumber.js": "^9.0.2",
-    "hdkey": "^2.0.1",
-    "tronlib": "^1.0.2"
+    "@scure/base": "^1.1.1",
+    "@scure/bip32": "^1.3.0",
+    "cs-common": "file:../CoinSpaceV6/cs-common",
+    "tronlib": "^2.0.0"
   },
   "devDependencies": {
-    "eslint": "^8.16.0",
-    "eslint-config-coinspace": "^1.2.2",
-    "mocha": "^10.0.0"
+    "eslint": "^8.41.0",
+    "eslint-config-coinspace": "^2.0.0",
+    "mocha": "^10.0.0",
+    "sinon": "^15.1.0"
   },
   "eslintConfig": {
     "extends": [
       "coinspace"
     ],
     "env": {
-      "node": true
+      "browser": true
     },
     "parserOptions": {
-      "ecmaVersion": 2022,
       "requireConfigFile": false,
       "sourceType": "module"
     },
@@ -43,6 +44,7 @@
           "test/*"
         ],
         "env": {
+          "node": true,
           "mocha": true
         }
       }

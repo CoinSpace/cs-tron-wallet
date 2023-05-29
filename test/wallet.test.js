@@ -1,5 +1,5 @@
 /* eslint-disable max-len */
-import { Amount } from 'cs-common';
+import { Amount } from '@coinspace/cs-common';
 import Wallet from '../index.js';
 import assert from 'assert/strict';
 import fs from 'fs/promises';

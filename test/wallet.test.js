@@ -64,7 +64,6 @@ describe('Tron Wallet', () => {
       account: {
         request(...args) { console.log(args); },
       },
-      apiWeb: 'web',
       apiNode: 'node',
       storage: { get() {}, set() {}, save() {} },
       txPerPage: 5,
@@ -78,7 +77,6 @@ describe('Tron Wallet', () => {
       account: {
         request(...args) { console.log(args); },
       },
-      apiWeb: 'web',
       apiNode: 'node',
       storage: { get() {}, set() {}, save() {} },
       txPerPage: 5,

@@ -100,6 +100,7 @@ describe('Tron Wallet', () => {
         ...defaultOptionsToken,
       });
       assert.equal(wallet.state, Wallet.STATE_CREATED);
+      assert.equal(wallet.tokenUrl, 'https://tronscan.org/#/contract/TR7NHqjeKQxGTCi8q8ZY4pL8otSzgjLj6t');
     });
   });
 

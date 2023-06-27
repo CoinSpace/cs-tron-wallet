@@ -299,6 +299,15 @@ describe('Tron Wallet', () => {
         assert.ok(await wallet.validateAddress({ address: DESTIONATION_ADDRESS }));
       });
 
+      it('empty address', async () => {
+        await assert.rejects(async () => {
+          await wallet.validateAddress({ address: '' });
+        }, {
+          name: 'EmptyAddressError',
+          message: 'Empty address',
+        });
+      });
+
       it('invalid address', async () => {
         await assert.rejects(async () => {
           await wallet.validateAddress({ address: '123' });

@@ -20,7 +20,7 @@
     "tronlib": "^2.0.0"
   },
   "peerDependencies": {
-    "@coinspace/cs-common": "^1.0.7"
+    "@coinspace/cs-common": "^1.0.11"
   },
   "devDependencies": {
     "eslint": "^8.41.0",

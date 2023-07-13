@@ -238,6 +238,18 @@ describe('Tron Wallet', () => {
       assert.equal(wallet.balance.value, 6000000n);
       storage.verify();
     });
+
+    it('should set STATE_ERROR on error', async () => {
+      const wallet = new Wallet({
+        ...defaultOptionsCoin,
+      });
+      await wallet.open(RANDOM_PUBLIC_KEY);
+      sinon.stub(defaultOptionsCoin.account, 'request');
+      await assert.rejects(async () => {
+        await wallet.load();
+      });
+      assert.equal(wallet.state, Wallet.STATE_ERROR);
+    });
   });
 
   describe('getPublicKey', () => {

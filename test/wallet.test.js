@@ -869,14 +869,14 @@ describe('Tron Wallet', () => {
             transaction: TRANSACTION,
           },
           baseURL: 'node',
-        }).resolves({ code: 'SUCCESS' });
+        }).resolves({ code: 'SUCCESS', txid: '123456' });
       const wallet = new Wallet({
         ...defaultOptionsCoin,
       });
       await wallet.open(RANDOM_PUBLIC_KEY);
       await wallet.load();
 
-      await wallet.createTransaction({
+      const id = await wallet.createTransaction({
         address: DESTIONATION_ADDRESS,
         amount: new Amount(2_000000, wallet.crypto.decimals),
       }, RANDOM_SEED);
@@ -890,6 +890,7 @@ describe('Tron Wallet', () => {
         },
         baseURL: 'node',
       }).callCount, 1);
+      assert.equal(id, '123456');
     });
 
     it('should create valid transaction (token)', async () => {
@@ -945,14 +946,14 @@ describe('Tron Wallet', () => {
             transaction: TRANSACTION_TRC20,
           },
           baseURL: 'node',
-        }).resolves({ code: 'SUCCESS' });
+        }).resolves({ code: 'SUCCESS', txid: '123456' });
       const wallet = new Wallet({
         ...defaultOptionsToken,
       });
       await wallet.open(RANDOM_PUBLIC_KEY);
       await wallet.load();
 
-      await wallet.createTransaction({
+      const id = await wallet.createTransaction({
         address: DESTIONATION_ADDRESS,
         amount: new Amount(2_000000, wallet.crypto.decimals),
       }, RANDOM_SEED);
@@ -966,6 +967,7 @@ describe('Tron Wallet', () => {
         },
         baseURL: 'node',
       }).callCount, 1);
+      assert.equal(id, '123456');
     });
   });
 

@@ -61,9 +61,7 @@ describe('Tron Wallet', () => {
       platform: tronATtron,
       cache: { get() {}, set() {} },
       settings: {},
-      account: {
-        request(...args) { console.log(args); },
-      },
+      request(...args) { console.log(args); },
       apiNode: 'node',
       storage: { get() {}, set() {}, save() {} },
       txPerPage: 5,
@@ -74,9 +72,7 @@ describe('Tron Wallet', () => {
       platform: tronATtron,
       cache: { get() {}, set() {} },
       settings: {},
-      account: {
-        request(...args) { console.log(args); },
-      },
+      request(...args) { console.log(args); },
       apiNode: 'node',
       storage: { get() {}, set() {}, save() {} },
       txPerPage: 5,
@@ -192,12 +188,13 @@ describe('Tron Wallet', () => {
 
   describe('load', () => {
     it('should load wallet (coin)', async () => {
-      sinon.stub(defaultOptionsCoin.account, 'request')
+      sinon.stub(defaultOptionsCoin, 'request')
         .withArgs({
           seed: 'device',
           method: 'GET',
           url: `api/v1/account/${WALLET_ADDRESS}/balance`,
           baseURL: 'node',
+          headers: sinon.match.object,
         }).resolves({ balance: 504_000000 });
       const storage = sinon.mock(defaultOptionsCoin.storage);
       storage.expects('set').once().withArgs('balance', '504000000');
@@ -213,18 +210,20 @@ describe('Tron Wallet', () => {
     });
 
     it('should load wallet (token)', async () => {
-      sinon.stub(defaultOptionsToken.account, 'request')
+      sinon.stub(defaultOptionsToken, 'request')
         .withArgs({
           seed: 'device',
           method: 'GET',
           url: `api/v1/account/${WALLET_ADDRESS}/balance`,
           baseURL: 'node',
+          headers: sinon.match.object,
         }).resolves({ balance: 504_000000 })
         .withArgs({
           seed: 'device',
           method: 'GET',
           url: `api/v1/account/${WALLET_ADDRESS}/trc20/${tetherATtron.address}/balance`,
           baseURL: 'node',
+          headers: sinon.match.object,
         }).resolves({ balance: 6_000000 });
       const storage = sinon.mock(defaultOptionsToken.storage);
       storage.expects('set').once().withArgs('balance', '6000000');
@@ -244,7 +243,7 @@ describe('Tron Wallet', () => {
         ...defaultOptionsCoin,
       });
       await wallet.open(RANDOM_PUBLIC_KEY);
-      sinon.stub(defaultOptionsCoin.account, 'request');
+      sinon.stub(defaultOptionsCoin, 'request');
       await assert.rejects(async () => {
         await wallet.load();
       });
@@ -294,12 +293,13 @@ describe('Tron Wallet', () => {
     describe('validateAddress', () => {
       let wallet;
       beforeEach(async () => {
-        sinon.stub(defaultOptionsCoin.account, 'request')
+        sinon.stub(defaultOptionsCoin, 'request')
           .withArgs({
             seed: 'device',
             method: 'GET',
             url: `api/v1/account/${WALLET_ADDRESS}/balance`,
             baseURL: 'node',
+            headers: sinon.match.object,
           }).resolves({ balance: 50_4000000 });
         wallet = new Wallet({
           ...defaultOptionsCoin,
@@ -343,30 +343,34 @@ describe('Tron Wallet', () => {
     describe('validateAmount (coin)', () => {
       let wallet;
       beforeEach(async () => {
-        sinon.stub(defaultOptionsCoin.account, 'request')
+        sinon.stub(defaultOptionsCoin, 'request')
           .withArgs({
             seed: 'device',
             method: 'GET',
             url: `api/v1/account/${WALLET_ADDRESS}/balance`,
             baseURL: 'node',
+            headers: sinon.match.object,
           }).resolves({ balance: 10_000000 })
           .withArgs({
             seed: 'device',
             method: 'GET',
             url: `api/v1/account/${DESTIONATION_ADDRESS}`,
             baseURL: 'node',
+            headers: sinon.match.object,
           }).resolves({ balance: 123 })
           .withArgs({
             seed: 'device',
             method: 'GET',
             url: `api/v1/account/${WALLET_ADDRESS}/resources`,
             baseURL: 'node',
+            headers: sinon.match.object,
           }).resolves({ freeNetLimit: 1500 })
           .withArgs({
             seed: 'device',
             method: 'GET',
             url: 'api/v1/chainparameters',
             baseURL: 'node',
+            headers: sinon.match.object,
           }).resolves(CHAIN_PARAMETERS);
         wallet = new Wallet({
           ...defaultOptionsCoin,
@@ -414,30 +418,34 @@ describe('Tron Wallet', () => {
       let wallet;
       let request;
       beforeEach(async () => {
-        request = sinon.stub(defaultOptionsToken.account, 'request')
+        request = sinon.stub(defaultOptionsToken, 'request')
           .withArgs({
             seed: 'device',
             method: 'GET',
             url: `api/v1/account/${WALLET_ADDRESS}/balance`,
             baseURL: 'node',
+            headers: sinon.match.object,
           }).resolves({ balance: 10_000000 })
           .withArgs({
             seed: 'device',
             method: 'GET',
             url: `api/v1/account/${WALLET_ADDRESS}/trc20/${tetherATtron.address}/balance`,
             baseURL: 'node',
+            headers: sinon.match.object,
           }).resolves({ balance: 6_000000 })
           .withArgs({
             seed: 'device',
             method: 'GET',
             url: `api/v1/account/${DESTIONATION_ADDRESS}`,
             baseURL: 'node',
+            headers: sinon.match.object,
           }).resolves({ balance: 123 })
           .withArgs({
             seed: 'device',
             method: 'GET',
             url: `api/v1/account/${WALLET_ADDRESS}/resources`,
             baseURL: 'node',
+            headers: sinon.match.object,
           }).resolves({ freeNetLimit: 1500 })
           .withArgs({
             seed: 'device',
@@ -445,12 +453,14 @@ describe('Tron Wallet', () => {
             url: `api/v1/estimateenergy/${tetherATtron.address}`,
             params: sinon.match.any,
             baseURL: 'node',
+            headers: sinon.match.object,
           }).resolves({ energy: 14910 })
           .withArgs({
             seed: 'device',
             method: 'GET',
             url: 'api/v1/chainparameters',
             baseURL: 'node',
+            headers: sinon.match.object,
           }).resolves(CHAIN_PARAMETERS);
         wallet = new Wallet({
           ...defaultOptionsToken,
@@ -500,6 +510,7 @@ describe('Tron Wallet', () => {
             method: 'GET',
             url: `api/v1/account/${WALLET_ADDRESS}/balance`,
             baseURL: 'node',
+            headers: sinon.match.object,
           }).resolves({ balance: 0 });
         await wallet.load();
 
@@ -509,8 +520,8 @@ describe('Tron Wallet', () => {
             amount: new Amount(2_000000n, wallet.crypto.decimals),
           });
         }, {
-          name: 'InsufficientCoinForTokenTransactionError',
-          message: 'Insufficient funds for token transaction',
+          name: 'InsufficientCoinForTransactionFeeError',
+          message: 'Insufficient funds to pay the transaction fee',
           amount: new Amount(6_262200n, wallet.platform.decimals),
         });
       });
@@ -520,18 +531,20 @@ describe('Tron Wallet', () => {
       let wallet;
       let request;
       beforeEach(async () => {
-        request = sinon.stub(defaultOptionsCoin.account, 'request')
+        request = sinon.stub(defaultOptionsCoin, 'request')
           .withArgs({
             seed: 'device',
             method: 'GET',
             url: `api/v1/account/${WALLET_ADDRESS}/balance`,
             baseURL: 'node',
+            headers: sinon.match.object,
           }).resolves({ balance: 10_000000 })
           .withArgs({
             seed: 'device',
             method: 'GET',
             url: 'api/v1/chainparameters',
             baseURL: 'node',
+            headers: sinon.match.object,
           }).resolves(CHAIN_PARAMETERS);
         wallet = new Wallet({
           ...defaultOptionsCoin,
@@ -569,12 +582,14 @@ describe('Tron Wallet', () => {
             method: 'GET',
             url: `api/v1/account/${DESTIONATION_ADDRESS}`,
             baseURL: 'node',
+            headers: sinon.match.object,
           }).resolves({ balance: 123 })
           .withArgs({
             seed: 'device',
             method: 'GET',
             url: `api/v1/account/${WALLET_ADDRESS}/resources`,
             baseURL: 'node',
+            headers: sinon.match.object,
           }).resolves({ freeNetLimit: 1500 });
         await wallet.load();
 
@@ -592,12 +607,14 @@ describe('Tron Wallet', () => {
             method: 'GET',
             url: `api/v1/account/${DESTIONATION_ADDRESS}`,
             baseURL: 'node',
+            headers: sinon.match.object,
           }).resolves({ balance: 123 })
           .withArgs({
             seed: 'device',
             method: 'GET',
             url: `api/v1/account/${WALLET_ADDRESS}/resources`,
             baseURL: 'node',
+            headers: sinon.match.object,
           }).resolves({ freeNetLimit: 1500, freeNetUsed: 1500 });
         await wallet.load();
 
@@ -613,24 +630,27 @@ describe('Tron Wallet', () => {
       let wallet;
       let request;
       beforeEach(async () => {
-        request = sinon.stub(defaultOptionsToken.account, 'request')
+        request = sinon.stub(defaultOptionsToken, 'request')
           .withArgs({
             seed: 'device',
             method: 'GET',
             url: `api/v1/account/${WALLET_ADDRESS}/balance`,
             baseURL: 'node',
+            headers: sinon.match.object,
           }).resolves({ balance: 10_000000 })
           .withArgs({
             seed: 'device',
             method: 'GET',
             url: `api/v1/account/${WALLET_ADDRESS}/trc20/${tetherATtron.address}/balance`,
             baseURL: 'node',
+            headers: sinon.match.object,
           }).resolves({ balance: 6_000000 })
           .withArgs({
             seed: 'device',
             method: 'GET',
             url: 'api/v1/chainparameters',
             baseURL: 'node',
+            headers: sinon.match.object,
           }).resolves(CHAIN_PARAMETERS)
           .withArgs({
             seed: 'device',
@@ -638,6 +658,7 @@ describe('Tron Wallet', () => {
             url: `api/v1/estimateenergy/${tetherATtron.address}`,
             params: sinon.match.any,
             baseURL: 'node',
+            headers: sinon.match.object,
           }).resolves({ energy: 28362 });
         wallet = new Wallet({
           ...defaultOptionsToken,
@@ -652,12 +673,14 @@ describe('Tron Wallet', () => {
             method: 'GET',
             url: `api/v1/account/${DESTIONATION_ADDRESS}`,
             baseURL: 'node',
+            headers: sinon.match.object,
           }).resolves({ balance: 123 })
           .withArgs({
             seed: 'device',
             method: 'GET',
             url: `api/v1/account/${WALLET_ADDRESS}/resources`,
             baseURL: 'node',
+            headers: sinon.match.object,
           }).resolves({ freeNetLimit: 1500 });
         await wallet.load();
 
@@ -675,12 +698,14 @@ describe('Tron Wallet', () => {
             method: 'GET',
             url: `api/v1/account/${DESTIONATION_ADDRESS}`,
             baseURL: 'node',
+            headers: sinon.match.object,
           }).resolves({ balance: 123 })
           .withArgs({
             seed: 'device',
             method: 'GET',
             url: `api/v1/account/${WALLET_ADDRESS}/resources`,
             baseURL: 'node',
+            headers: sinon.match.object,
           }).resolves({ freeNetLimit: 1500, freeNetUsed: 1500 });
         await wallet.load();
 
@@ -696,18 +721,20 @@ describe('Tron Wallet', () => {
       let wallet;
       let request;
       beforeEach(async () => {
-        request = sinon.stub(defaultOptionsCoin.account, 'request')
+        request = sinon.stub(defaultOptionsCoin, 'request')
           .withArgs({
             seed: 'device',
             method: 'GET',
             url: `api/v1/account/${WALLET_ADDRESS}/balance`,
             baseURL: 'node',
+            headers: sinon.match.object,
           }).resolves({ balance: 10_000000 })
           .withArgs({
             seed: 'device',
             method: 'GET',
             url: 'api/v1/chainparameters',
             baseURL: 'node',
+            headers: sinon.match.object,
           }).resolves(CHAIN_PARAMETERS);
         wallet = new Wallet({
           ...defaultOptionsCoin,
@@ -722,12 +749,14 @@ describe('Tron Wallet', () => {
             method: 'GET',
             url: `api/v1/account/${DESTIONATION_ADDRESS}`,
             baseURL: 'node',
+            headers: sinon.match.object,
           }).resolves(undefined)
           .withArgs({
             seed: 'device',
             method: 'GET',
             url: `api/v1/account/${WALLET_ADDRESS}/resources`,
             baseURL: 'node',
+            headers: sinon.match.object,
           }).resolves({ freeNetLimit: 1500 });
         await wallet.load();
 
@@ -742,12 +771,14 @@ describe('Tron Wallet', () => {
             method: 'GET',
             url: `api/v1/account/${DESTIONATION_ADDRESS}`,
             baseURL: 'node',
+            headers: sinon.match.object,
           }).resolves({ balance: 123 })
           .withArgs({
             seed: 'device',
             method: 'GET',
             url: `api/v1/account/${WALLET_ADDRESS}/resources`,
             baseURL: 'node',
+            headers: sinon.match.object,
           }).resolves({ freeNetLimit: 1500 });
         await wallet.load();
 
@@ -762,12 +793,14 @@ describe('Tron Wallet', () => {
             method: 'GET',
             url: `api/v1/account/${DESTIONATION_ADDRESS}`,
             baseURL: 'node',
+            headers: sinon.match.object,
           }).resolves({ balance: 123 })
           .withArgs({
             seed: 'device',
             method: 'GET',
             url: `api/v1/account/${WALLET_ADDRESS}/resources`,
             baseURL: 'node',
+            headers: sinon.match.object,
           }).resolves({ freeNetLimit: 1500, freeNetUsed: 1500 });
         await wallet.load();
 
@@ -778,24 +811,27 @@ describe('Tron Wallet', () => {
 
     describe('estimateMaxAmount (token)', () => {
       it('should correct estimate max amount (token)', async () => {
-        sinon.stub(defaultOptionsToken.account, 'request')
+        sinon.stub(defaultOptionsToken, 'request')
           .withArgs({
             seed: 'device',
             method: 'GET',
             url: `api/v1/account/${WALLET_ADDRESS}/balance`,
             baseURL: 'node',
+            headers: sinon.match.object,
           }).resolves({ balance: 10_000000 })
           .withArgs({
             seed: 'device',
             method: 'GET',
             url: `api/v1/account/${WALLET_ADDRESS}/trc20/${tetherATtron.address}/balance`,
             baseURL: 'node',
+            headers: sinon.match.object,
           }).resolves({ balance: 6_000000 })
           .withArgs({
             seed: 'device',
             method: 'GET',
             url: 'api/v1/chainparameters',
             baseURL: 'node',
+            headers: sinon.match.object,
           }).resolves(CHAIN_PARAMETERS)
           .withArgs({
             seed: 'device',
@@ -803,18 +839,21 @@ describe('Tron Wallet', () => {
             url: `api/v1/estimateenergy/${tetherATtron.address}`,
             params: sinon.match.any,
             baseURL: 'node',
+            headers: sinon.match.object,
           }).resolves({ energy: 28362 })
           .withArgs({
             seed: 'device',
             method: 'GET',
             url: `api/v1/account/${DESTIONATION_ADDRESS}`,
             baseURL: 'node',
+            headers: sinon.match.object,
           }).resolves({ balance: 123 })
           .withArgs({
             seed: 'device',
             method: 'GET',
             url: `api/v1/account/${WALLET_ADDRESS}/resources`,
             baseURL: 'node',
+            headers: sinon.match.object,
           }).resolves({ freeNetLimit: 1500 });
         const wallet = new Wallet({
           ...defaultOptionsToken,
@@ -830,36 +869,41 @@ describe('Tron Wallet', () => {
 
   describe('createTransaction', () => {
     it('should create valid transaction (coin)', async () => {
-      const request = sinon.stub(defaultOptionsCoin.account, 'request')
+      const request = sinon.stub(defaultOptionsCoin, 'request')
         .withArgs({
           seed: 'device',
           method: 'GET',
           url: `api/v1/account/${WALLET_ADDRESS}/balance`,
           baseURL: 'node',
+          headers: sinon.match.object,
         }).resolves({ balance: 10_000000 })
         .withArgs({
           seed: 'device',
           method: 'GET',
           url: `api/v1/account/${DESTIONATION_ADDRESS}`,
           baseURL: 'node',
+          headers: sinon.match.object,
         }).resolves({ balance: 123 })
         .withArgs({
           seed: 'device',
           method: 'GET',
           url: `api/v1/account/${WALLET_ADDRESS}/resources`,
           baseURL: 'node',
+          headers: sinon.match.object,
         }).resolves({ freeNetLimit: 1500 })
         .withArgs({
           seed: 'device',
           method: 'GET',
           url: 'api/v1/chainparameters',
           baseURL: 'node',
+          headers: sinon.match.object,
         }).resolves(CHAIN_PARAMETERS)
         .withArgs({
           seed: 'device',
           method: 'GET',
           url: 'api/v1/latestblock',
           baseURL: 'node',
+          headers: sinon.match.object,
         }).resolves(LATEST_BLOCKHASH)
         .withArgs({
           seed: 'device',
@@ -869,6 +913,7 @@ describe('Tron Wallet', () => {
             transaction: TRANSACTION,
           },
           baseURL: 'node',
+          headers: sinon.match.object,
         }).resolves({ code: 'SUCCESS', txid: '123456' });
       const wallet = new Wallet({
         ...defaultOptionsCoin,
@@ -889,23 +934,26 @@ describe('Tron Wallet', () => {
           transaction: TRANSACTION,
         },
         baseURL: 'node',
+        headers: sinon.match.object,
       }).callCount, 1);
       assert.equal(id, '123456');
     });
 
     it('should create valid transaction (token)', async () => {
-      const request = sinon.stub(defaultOptionsToken.account, 'request')
+      const request = sinon.stub(defaultOptionsToken, 'request')
         .withArgs({
           seed: 'device',
           method: 'GET',
           url: `api/v1/account/${WALLET_ADDRESS}/balance`,
           baseURL: 'node',
+          headers: sinon.match.object,
         }).resolves({ balance: 10_000000 })
         .withArgs({
           seed: 'device',
           method: 'GET',
           url: `api/v1/account/${WALLET_ADDRESS}/trc20/${tetherATtron.address}/balance`,
           baseURL: 'node',
+          headers: sinon.match.object,
         }).resolves({ balance: 6_000000 })
         .withArgs({
           seed: 'device',
@@ -913,30 +961,35 @@ describe('Tron Wallet', () => {
           url: `api/v1/estimateenergy/${tetherATtron.address}`,
           params: sinon.match.any,
           baseURL: 'node',
+          headers: sinon.match.object,
         }).resolves({ energy: 28362 })
         .withArgs({
           seed: 'device',
           method: 'GET',
           url: `api/v1/account/${DESTIONATION_ADDRESS}`,
           baseURL: 'node',
+          headers: sinon.match.object,
         }).resolves({ balance: 123 })
         .withArgs({
           seed: 'device',
           method: 'GET',
           url: `api/v1/account/${WALLET_ADDRESS}/resources`,
           baseURL: 'node',
+          headers: sinon.match.object,
         }).resolves({ freeNetLimit: 1500 })
         .withArgs({
           seed: 'device',
           method: 'GET',
           url: 'api/v1/chainparameters',
           baseURL: 'node',
+          headers: sinon.match.object,
         }).resolves(CHAIN_PARAMETERS)
         .withArgs({
           seed: 'device',
           method: 'GET',
           url: 'api/v1/latestblock',
           baseURL: 'node',
+          headers: sinon.match.object,
         }).resolves(LATEST_BLOCKHASH)
         .withArgs({
           seed: 'device',
@@ -946,6 +999,7 @@ describe('Tron Wallet', () => {
             transaction: TRANSACTION_TRC20,
           },
           baseURL: 'node',
+          headers: sinon.match.object,
         }).resolves({ code: 'SUCCESS', txid: '123456' });
       const wallet = new Wallet({
         ...defaultOptionsToken,
@@ -966,6 +1020,7 @@ describe('Tron Wallet', () => {
           transaction: TRANSACTION_TRC20,
         },
         baseURL: 'node',
+        headers: sinon.match.object,
       }).callCount, 1);
       assert.equal(id, '123456');
     });
@@ -973,12 +1028,13 @@ describe('Tron Wallet', () => {
 
   describe('loadTransactions', () => {
     it('should load transactions (coin)', async () => {
-      sinon.stub(defaultOptionsCoin.account, 'request')
+      sinon.stub(defaultOptionsCoin, 'request')
         .withArgs({
           seed: 'device',
           method: 'GET',
           url: `api/v1/account/${WALLET_ADDRESS}/balance`,
           baseURL: 'node',
+          headers: sinon.match.object,
         }).resolves({ balance: 10_000000 })
         .withArgs({
           seed: 'device',
@@ -986,6 +1042,7 @@ describe('Tron Wallet', () => {
           url: `api/v1/account/${WALLET_ADDRESS}/transactions`,
           params: sinon.match.object,
           baseURL: 'node',
+          headers: sinon.match.object,
         }).resolves(TRANSACTIONS);
       const wallet = new Wallet({
         ...defaultOptionsCoin,
@@ -1000,18 +1057,20 @@ describe('Tron Wallet', () => {
     });
 
     it('should load transactions (token)', async () => {
-      sinon.stub(defaultOptionsToken.account, 'request')
+      sinon.stub(defaultOptionsToken, 'request')
         .withArgs({
           seed: 'device',
           method: 'GET',
           url: `api/v1/account/${WALLET_ADDRESS}/balance`,
           baseURL: 'node',
+          headers: sinon.match.object,
         }).resolves({ balance: 10_000000 })
         .withArgs({
           seed: 'device',
           method: 'GET',
           url: `api/v1/account/${WALLET_ADDRESS}/trc20/${tetherATtron.address}/balance`,
           baseURL: 'node',
+          headers: sinon.match.object,
         }).resolves({ balance: 6_000000 })
         .withArgs({
           seed: 'device',
@@ -1019,6 +1078,7 @@ describe('Tron Wallet', () => {
           url: `api/v1/account/${WALLET_ADDRESS}/trc20/${tetherATtron.address}/transactions`,
           params: sinon.match.object,
           baseURL: 'node',
+          headers: sinon.match.object,
         }).resolves(TRANSACTIONS_TRC20);
       const wallet = new Wallet({
         ...defaultOptionsToken,

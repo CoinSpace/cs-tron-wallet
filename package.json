@@ -10,7 +10,7 @@
   },
   "type": "module",
   "scripts": {
-    "lint": "eslint lib test index.js",
+    "lint": "eslint . --ext .js --report-unused-disable-directives",
     "test": "mocha --reporter spec"
   },
   "repository": {

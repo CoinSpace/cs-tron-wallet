@@ -5,6 +5,9 @@
   "author": "Coin Crypto Wallet <support@coin.space> (https://coin.space/)",
   "license": "MIT",
   "main": "./index.js",
+  "exports": {
+    ".": "./index.js"
+  },
   "type": "module",
   "scripts": {
     "lint": "eslint lib test index.js",
@@ -21,13 +24,13 @@
     "tronlib": "^2.0.0"
   },
   "peerDependencies": {
-    "@coinspace/cs-common": "^1.1.4"
+    "@coinspace/cs-common": "^1.1.6"
   },
   "devDependencies": {
     "eslint": "^8.41.0",
     "eslint-config-coinspace": "^2.0.0",
     "mocha": "^10.0.0",
-    "sinon": "^15.1.0"
+    "sinon": "^19.0.0"
   },
   "eslintConfig": {
     "extends": [

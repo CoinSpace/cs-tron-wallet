@@ -1,9 +1,10 @@
 /* eslint-disable max-len */
-import { Amount } from '@coinspace/cs-common';
-import Wallet from '../index.js';
 import assert from 'assert/strict';
 import fs from 'fs/promises';
 import sinon from 'sinon';
+
+import { Amount } from '@coinspace/cs-common';
+import Wallet, { TronTransaction } from '@coinspace/cs-tron-wallet';
 
 // either dismiss upset disease clump hazard paddle twist fetch tissue hello buyer
 const RANDOM_SEED = Buffer.from('3e818cec5efc7505369fae3f162af61130b673fa9b40e5955d5cde22a85afa03748d074356a281a5fc1dbd0b721357c56095a54de8d4bc6ecaa288f300776ae4', 'hex');
@@ -239,11 +240,11 @@ describe('Tron Wallet', () => {
     });
 
     it('should set STATE_ERROR on error', async () => {
+      sinon.stub(defaultOptionsCoin, 'request');
       const wallet = new Wallet({
         ...defaultOptionsCoin,
       });
       await wallet.open(RANDOM_PUBLIC_KEY);
-      sinon.stub(defaultOptionsCoin, 'request');
       await assert.rejects(async () => {
         await wallet.load();
       });
@@ -1053,6 +1054,8 @@ describe('Tron Wallet', () => {
       const res = await wallet.loadTransactions();
       assert.strictEqual(res.hasMore, true);
       assert.strictEqual(res.transactions.length, 5);
+      assert.strictEqual(res.transactions[0].action, TronTransaction.ACTION_TRANSFER);
+      assert.strictEqual(res.transactions[1].action, TronTransaction.ACTION_TOKEN_TRANSFER);
       assert.strictEqual(res.cursor, 'T6atjwJHXYTfMuvCdsZ6RScw8vrRgbF5QaDfpjYWYJhVpKdAQBvMaC68G2mXN7tsrCe9Uvd7ceYJay4EAXVc3UDM6d11sg');
     });
 

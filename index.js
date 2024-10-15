@@ -1,1 +1,1 @@
-export { default } from './lib/TronWallet.js';
+export { default, TronTransaction } from './lib/TronWallet.js';

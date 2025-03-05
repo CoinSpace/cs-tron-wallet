@@ -99,6 +99,11 @@ describe('Tron Wallet', () => {
       assert.equal(wallet.state, Wallet.STATE_CREATED);
       assert.equal(wallet.tokenUrl, 'https://tronscan.org/#/contract/TR7NHqjeKQxGTCi8q8ZY4pL8otSzgjLj6t');
     });
+
+    it('wallet should have tokenUrl static method', () => {
+      const url = Wallet.tokenUrl('tron', 'TR7NHqjeKQxGTCi8q8ZY4pL8otSzgjLj6t', false);
+      assert.equal(url, 'https://tronscan.org/#/contract/TR7NHqjeKQxGTCi8q8ZY4pL8otSzgjLj6t');
+    });
   });
 
   describe('create wallet', () => {

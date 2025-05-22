@@ -1,6 +1,7 @@
 /* eslint-disable max-len */
-import assert from 'assert/strict';
-import fs from 'fs/promises';
+import { Buffer } from 'node:buffer';
+import assert from 'node:assert/strict';
+import fs from 'node:fs/promises';
 import sinon from 'sinon';
 
 import { Amount } from '@coinspace/cs-common';
